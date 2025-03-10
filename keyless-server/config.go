@@ -33,6 +33,8 @@ var config struct {
 		AccountKey string `json:"account_key"` // required, file path
 	} `json:"letsencrypt"`
 
+	HostnameRecords map[string]string `json:"hostname_records"`
+
 	Replica string `json:"replica"` // optional
 }
 

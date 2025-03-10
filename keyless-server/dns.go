@@ -9,8 +9,9 @@ import (
 )
 
 var (
-	nameserver dnsmessage.Name
-	cname      dnsmessage.Name
+	nameserver      dnsmessage.Name
+	cname           dnsmessage.Name
+	hostnamerecords map[string]string
 )
 
 func dnsConfig() error {
@@ -19,6 +20,7 @@ func dnsConfig() error {
 	if err == nil && config.CName != "" {
 		cname, err = dnsmessage.NewName(config.CName + ".")
 	}
+	hostnamerecords = config.HostnameRecords
 	return err
 }
 
@@ -296,6 +298,24 @@ func IsTailscale(ip net.IP) bool {
 func getIPv4(name string) net.IP {
 	if name == "my" || name == "local" || name == "localhost" {
 		return net.IPv4(127, 0, 0, 1).To4()
+	}
+
+	ipaddress, exists := hostnamerecords[name]
+
+	if exists {
+		ipv4 := net.ParseIP(ipaddress).To4()
+
+		if ipv4 == nil {
+			return nil
+		}
+
+		if config.IsPrivateIPRangesOnly == true {
+			if !ipv4.IsLoopback() && !ipv4.IsPrivate() && !ipv4.IsLinkLocalUnicast() && !IsTailscale(ipv4) {
+				return nil
+			}
+		}
+
+		return ipv4
 	}
 
 	name = strings.ReplaceAll(name, "-", ".")

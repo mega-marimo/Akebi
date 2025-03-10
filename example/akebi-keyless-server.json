@@ -34,5 +34,15 @@
         // Let's Encrypt account settings and private key.
         "account":     "letsencrypt/account.json",
         "account_key": "letsencrypt/account.pem"
+    },
+
+    // Optional: Linking hostname to IPAddress
+    // For Example, { "host": "127.0.0.1", "host2", "127.0.0.2" }
+    // host.local.example.com resolves to 127.0.0.1
+    // host2.local.example.com resolves to 127.0.0.2
+    "hostname_records": {
+        "host": "127.0.0.1",
+        "host2": "127.0.0.2"
     }
 }
+
